@@ -21,6 +21,10 @@ public class Main {
         System.out.println("2. LCG: ");
         int alege = scanner.nextInt();
 
+        Scanner scannerMS = new Scanner(System.in);
+        System.out.println("Cate numere random doriti sa generati? ");
+        int MS = scannerMS.nextInt();
+
         switch (alege)
         {
             case 1:
@@ -44,12 +48,9 @@ public class Main {
             _LastSeed = _seed;
 
 
-            while (true) {
-                System.out.println("Doriti sa continuati? y(Yes) or n(No)) ");
-                Scanner stringScanner = new Scanner(System.in);
-                String _choose = stringScanner.nextLine();
-                switch (_choose) {
-                    case "y":
+
+            while (MS != 0) {
+
                         MiddleSquare mso2 = new MiddleSquare(_seed);
                         _seed = mso2.NextSeed();
                         if (0 == (int) (_seed / pow(10, _numberOfNumbers - 1)))
@@ -60,17 +61,9 @@ public class Main {
                             _seed = _seed >> 1;
                         _LastSeed = _seed;
                         System.out.println("Random number is: " + _seed);
-                        break;
-                    case "n":
-                        System.exit(0);
-                        break;
-
-
-                    default:
-                        System.exit(0);
-                        break;
+                       --MS;
                 }
-            }
+            break;
 
             case 2:
 
@@ -93,26 +86,18 @@ public class Main {
                 LCG lcgo = new LCG(seedLcg, a, c, m);
                 lcgo.NextSeed();
 
-                while (true) {
-                    System.out.println("Doriti sa continuati? y(Yes) or n(No)) ");
-                    Scanner stringScanner = new Scanner(System.in);
-                    String _choose = stringScanner.nextLine();
+                while (MS != 0) {
 
-
-                    switch (_choose) {
-                        case "y":
-                            lcgo.NextSeed();
-                            break;
-                        case "n":
-                            System.exit(0);
-                            break;
-
-
-                        default:
-                            System.exit(0);
-                            break;
-                    }
+                    lcgo.NextSeed();
+                    --MS;
                 }
+                break;
+
+                default:
+                    System.exit(0);
+                    break;
+            }
+
         }
     }
-}
+
