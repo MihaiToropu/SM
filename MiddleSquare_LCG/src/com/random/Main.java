@@ -14,12 +14,22 @@ public class Main {
         int a;
         int c;
         int m;
+        int i = 0;
+
+        TreeMap<Integer, String> tmap =
+                new TreeMap<>();
+
+
 
         Scanner scanner = new Scanner(System.in);
         System.out.println("Alege: ");
         System.out.println("1. MiddleSquare: ");
         System.out.println("2. LCG: ");
         int alege = scanner.nextInt();
+
+        Scanner scannerMS = new Scanner(System.in);
+        System.out.println("Cate numere random doriti sa generati? ");
+        int MS = scannerMS.nextInt();
 
         switch (alege)
         {
@@ -35,42 +45,61 @@ public class Main {
             _numberOfNumbers = mso.countNumbers(_seed);
             _seed = mso.NextSeed();
 
+                tmap.put(7156, "21421sda");
+                boolean blnExists = tmap.containsKey(_seed);
+                System.out.println("Three exists in TreeMap ? : " + blnExists);
+                if(blnExists)
+                    System.out.println("FFSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS");
 
-            if (0 == (int) (_seed / pow(10, _numberOfNumbers - 1)))                                                                       //numere care incep cu 0
+            if (0 == (int) (_seed / pow(10, _numberOfNumbers - 1))) {//numere care incep cu 0
                 _seed = (int) (_seed + pow(10, _numberOfNumbers - 1) * ThreadLocalRandom.current().nextInt(1, 9 + 1));
-            if (0 == _seed % (_numberOfNumbers / 2))                                                                                     //numere care se termina cu (_numberOfNumbers / 2) 0-uri
+                tmap.put(_seed, "Data_"+ (i++));
+            }
+
+            if (0 == _seed % (_numberOfNumbers / 2)){                                                                                     //numere care se termina cu (_numberOfNumbers / 2) 0-uri
                 _seed = _seed + ThreadLocalRandom.current().nextInt(1, (int) (pow(10, _numberOfNumbers - 1)));
+                tmap.put(_seed, "Data_"+ (i++));
+            }
             System.out.println("Random number is: " + _seed);
             _LastSeed = _seed;
 
 
-            while (true) {
-                System.out.println("Doriti sa continuati? y(Yes) or n(No)) ");
-                Scanner stringScanner = new Scanner(System.in);
-                String _choose = stringScanner.nextLine();
-                switch (_choose) {
-                    case "y":
-                        MiddleSquare mso2 = new MiddleSquare(_seed);
-                        _seed = mso2.NextSeed();
-                        if (0 == (int) (_seed / pow(10, _numberOfNumbers - 1)))
+
+            while (MS != 0) {
+
+
+                MiddleSquare mso2 = new MiddleSquare(_seed);
+                _seed = mso2.NextSeed();
+
+                 blnExists = tmap.containsKey(_seed);
+                System.out.println("Three exists in TreeMap ? : " + blnExists);
+                if (blnExists)
+                {
+                    System.out.println("FFSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS");
+                }
+
+                        if (0 == (int) (_seed / pow(10, _numberOfNumbers - 1))) {
                             _seed = (int) (_seed + pow(10, _numberOfNumbers - 1) * ThreadLocalRandom.current().nextInt(1, 9 + 1));
-                        if (0 == _seed % (_numberOfNumbers / 2))
+                            tmap.put(_seed, "Data_"+ (i++));
+                        }
+
+                        if (0 == _seed % (_numberOfNumbers / 2)) {
                             _seed = _seed + ThreadLocalRandom.current().nextInt(1, (int) (pow(10, _numberOfNumbers - 1)));
-                        if (_seed == _LastSeed)                                             //daca ultimele 2 seed-uri sunt egale mutam ultimul seed cu un bit la dreapta in baza 2
+                            tmap.put(_seed, "Data_"+ (i++));
+                        }
+
+                        if (_seed == _LastSeed) {                                             //daca ultimele 2 seed-uri sunt egale mutam ultimul seed cu un bit la dreapta in baza 2
                             _seed = _seed >> 1;
+                            tmap.put(_seed, "Data_"+ (i++));
+                        }
+
                         _LastSeed = _seed;
                         System.out.println("Random number is: " + _seed);
-                        break;
-                    case "n":
-                        System.exit(0);
-                        break;
-
-
-                    default:
-                        System.exit(0);
-                        break;
-                }
+                       --MS;
             }
+
+
+            break;
 
             case 2:
 
@@ -93,26 +122,29 @@ public class Main {
                 LCG lcgo = new LCG(seedLcg, a, c, m);
                 lcgo.NextSeed();
 
-                while (true) {
-                    System.out.println("Doriti sa continuati? y(Yes) or n(No)) ");
-                    Scanner stringScanner = new Scanner(System.in);
-                    String _choose = stringScanner.nextLine();
+                while (MS != 0) {
 
-
-                    switch (_choose) {
-                        case "y":
-                            lcgo.NextSeed();
-                            break;
-                        case "n":
-                            System.exit(0);
-                            break;
-
-
-                        default:
-                            System.exit(0);
-                            break;
-                    }
+                    lcgo.NextSeed();
+                    --MS;
                 }
+                break;
+
+                default:
+                    System.exit(0);
+                    break;
+            }
+
+
+            Set set = tmap.entrySet();
+            Iterator iterator = set.iterator();
+            while(iterator.hasNext()) {
+            Map.Entry mentry = (Map.Entry)iterator.next();
+            System.out.print("key is: "+ mentry.getKey() + " & Value is: ");
+            System.out.println(mentry.getValue());}
+
+
+
+
         }
     }
-}
+
