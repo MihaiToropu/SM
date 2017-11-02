@@ -1,101 +1,132 @@
 package MS_LCG;
 
-
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import static java.lang.Math.pow;
 
 
-public class MiddleSquare extends Common implements Generator
-{
 
+public class MiddleSquare extends Common implements Generator {
+
+    static int x = 0;       //used for do while
     private int seed;
-    private int _number;
-    //int numereGenerate = 10000;
     private int lastSeed;
-    private Random rand = new Random();
-    TreeMap<String, Integer> tmap =
-            new TreeMap<>();
+    private int cifreDe0 = 0;
+    private int seedNumber;
+    private int numereGenerate = 1;
+    private int samallestSeedPossible;
+    private int biggestSeedPossible;
+    private int value = 1;          //value of treemap
 
 
-    public MiddleSquare(int seed)
-    {
+    private static TreeMap<Integer, Integer> tmap =
+            new TreeMap<Integer, Integer>();
+
+    private List<Integer> myList =
+            new ArrayList<Integer>();
+
+    private List<Float> myFloatList =
+            new ArrayList<Float>();
+
+    public MiddleSquare(int seed, int numereGenerate) {
         this.seed = seed;
-        //this.numereGenerate = numereGenerate;
+        lastSeed = seed;
+        this.numereGenerate = numereGenerate;
+        seedNumber = countNumbers(seed);
+        samallestSeedPossible = _pow(10, seedNumber - 1);
+        biggestSeedPossible = _pow(10, seedNumber) - 1;
     }
 
+
+
     @Override
-    public float NextSeed()
-    {
-
-        int i = 0;
-        int seedNumber = countNumbers(seed);
-
-        if(0 == i){
-            lastSeed = seed;
-            tmap.put("Data_" + i, lastSeed);
-            ++i;
-        }
+    public List<Float> NextSeed() {
 
 
-
-        seed = NextSeed2();
-
-        if (0 == (int) (seed / pow(10, seedNumber - 1))) {//numere care incep cu 0
-            seed = (int) (seed + pow(10, seedNumber - 1) * ThreadLocalRandom.current().nextInt(1, 9 + 1));
-        }
-        if (0 == seed % (seedNumber / 2)){                     //numere care se termina cu (_numberOfNumbers / 2) 0-uri
-            seed = seed + ThreadLocalRandom.current().nextInt(1, (int) (pow(10, seedNumber - 1)));
-        }
-        if (seed == lastSeed) {                //daca ultimele 2 seed-uri sunt egale mutam ultimul seed cu un bit la dreapta in baza 2
-            seed = (int)seed >> 1;
-        }
-
-        boolean blnExists = tmap.containsValue(seed);
-
-        while (blnExists) {
-
-            //seed = rand.nextInt(_pow(10, seedNumber)-1) + _pow(10, seedNumber-1) ;
-            seed = ThreadLocalRandom.current().nextInt(_pow(10, countNumbers(seed)-1), _pow(10, countNumbers(seed)));
-            System.out.println(seed);
-            /*if (seed == (_pow(10, seedNumber)-1)) {
-                seed = seed - ThreadLocalRandom.current().nextInt(1, (int) (pow(10, seedNumber - 1)));
+        do {
+            if (0 == x) {
+                tmap.put(seed, value);       //put first seed in treemap
+                myList.add(seed);
+                //System.out.println(seed);
             }
-            ++seed;
-            seed = (seed * seed) / _pow(10, _number/2) % _pow(10, _number);*/
-            blnExists = tmap.containsValue(seed);
-        }
 
-        tmap.put("Data_" + ++i, seed);
-        //System.out.println("Random number is: " + seed);
-        lastSeed = seed;
+            seed = NextSeed2();
 
+            if (seed == lastSeed) {
+                do {
+                    ++seed;
+                } while (seed == lastSeed);
+            }
+
+            if (0 == (int) (seed % pow(10, seedNumber))) {  //if number is 0 generate a new seed
+                seed = ThreadLocalRandom.current().nextInt(_pow(10, seedNumber - 1), _pow(10, seedNumber));  //new seed
+            }
+
+            int temp = seed;
+            if (samallestSeedPossible > seed) {//numbers which starts with 0
+                do {
+                    cifreDe0++;
+                    temp *= 10;
+                } while (temp < samallestSeedPossible);
+                temp = rotateSeedtoLeft(lastSeed, cifreDe0);
+                if (temp > biggestSeedPossible) {
+                    do {
+                        temp /= 10;
+                    } while (temp > biggestSeedPossible);
+                }
+                seed = temp;
+            }
+
+            boolean blnExists = tmap.containsKey(seed);   //check if the treemap contains the seed
+
+            while ((blnExists && (value % 2 == 0)) || (blnExists && (value < (int) (0.75 * numereGenerate)))) {
+                if (seed == (_pow(10, seedNumber) - 1)) {
+                    seed = ThreadLocalRandom.current().nextInt(_pow(10, seedNumber - 1), _pow(10, seedNumber));  //new seed
+                } else {
+                    ++seed;
+                }
+                blnExists = tmap.containsKey(seed);
+            }
+            myList.add(seed);
+            tmap.put(seed, value);
+
+
+
+            //System.out.println(seed);
+            lastSeed = seed;
+            x++;
+            value++;
+
+        } while (x < numereGenerate);
 
         /*Set set = tmap.entrySet();
         Iterator iterator = set.iterator();
-        while(iterator.hasNext()) {
-            Map.Entry mentry = (Map.Entry)iterator.next();
-            System.out.print("key is: "+ mentry.getKey() + " & Value is: ");
-            System.out.println(mentry.getValue());*/
-        System.out.println(((float)seed * ((float)1 / _pow(10, countNumbers(seed)))));
-        //return (float) (seed * (1 / _pow(10, countNumbers(seed))));
-        return  ((float)seed * ((float)1 / _pow(10, countNumbers(seed))));
+        while (iterator.hasNext()) {
+            Map.Entry mentry = (Map.Entry) iterator.next();
+            //System.out.print("key is: " + mentry.getKey() + " & Value is: ");
+            System.out.println(mentry.getKey());
+            //System.out.println(mentry.getValue());
+        }*/
 
+        for (Integer integer : myList)
+        {
+            myFloatList.add(((float)integer * ((float) 1 / _pow(10, countNumbers(integer)))));
+        }
+
+
+        return myFloatList;
+        //return ((float) seed * ((float) 1 / _pow(10, countNumbers(seed))));
 
     }
 
+    public List<Integer> getNumbers(){
+        return myList;
+    }
 
+    public int NextSeed2() {
 
-    public int NextSeed2()
-    {
-
-        seed = (seed * seed) / _pow(10, _number/2) % _pow(10, _number);
-        //System.out.println("Random number is: " + seed);
+        seed = (seed * seed) / _pow(10, seedNumber / 2) % _pow(10, seedNumber);
 
         return seed;
     }
-
-
-
-
 }
