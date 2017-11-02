@@ -1,6 +1,8 @@
 package MS_LCG;
 
+import java.util.List;
+
 public interface Generator
 {
-    public float NextSeed();
+    public List<Float> NextSeed();
 }
